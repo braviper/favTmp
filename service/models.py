@@ -1,4 +1,5 @@
 from peewee import *
+from playhouse import shortcuts
 import json
 
 database = SqliteDatabase('../db/template.db')
@@ -52,6 +53,7 @@ if __name__ == '__main__':
     me.save()
 
     for i in menu.select():
-        print(i.tojson())
+        print(shortcuts.model_to_dict(i))
+
 
     database.close()
