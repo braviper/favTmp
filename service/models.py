@@ -1,16 +1,29 @@
 from peewee import *
+import json
 
 database = SqliteDatabase('../db/template.db')
+
 
 class BaseModel(Model):
     class Meta:
         database = database
 
+    def tojson(self):
+        r = {}
+        for k in self._data.keys():
+            try:
+                r[k] = str(getattr(self, k))
+            except:
+                r[k] = json.dumps(getattr(self, k))
+        return str(r)
+
+
 class menu(BaseModel):
-    name = CharField()
+    value = CharField()
     content = CharField()
     icon = CharField()
     sort_num = IntegerField()
+
 
 class admin(BaseModel):
     account = CharField(unique=True)
@@ -22,21 +35,23 @@ class admin(BaseModel):
     last_login_date = DateTimeField(null=True)
 
 
-
-
 if __name__ == '__main__':
     import os
+
     if not os.path.isdir("../db"):
         os.mkdir('../db')
     database.connect()
-    database.drop_tables([menu,admin])
-    database.create_tables([menu,admin])
+    database.drop_tables([menu, admin])
+    database.create_tables([menu, admin])
 
-    adm = admin.create(account="admin",password="1",nickname='超级管理员',role=-1)
+    adm = admin.create(account="admin", password="1", nickname='超级管理员', role=-1)
     adm.save()
-
-    me = menu.create(name='菜单',content='menu',icon="bars",sort_num=2)
-    me2 = menu.create(name='管理员', content='admin',icon="user", sort_num=1)
+    me = menu.create(value='管理员', content='admin', icon="user", sort_num=1)
     me.save()
-    me2.save()
+    me = menu.create(value='菜单', content='menu', icon="bars", sort_num=2)
+    me.save()
+
+    for i in menu.select():
+        print(i.tojson())
+
     database.close()

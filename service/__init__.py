@@ -7,5 +7,9 @@ from service.public import *
 
 @app.route('/')
 def index():
-    from time import time
     return render_template("index.html")
+
+
+@app.route('/backstage')
+def backstage():
+    return render_template('backstage.html')
