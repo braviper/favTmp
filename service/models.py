@@ -36,7 +36,7 @@ class admin(BaseModel):
     last_login_date = DateTimeField(null=True)
 
 
-if __name__ == '__main__':
+def init_db():
     import os
 
     if not os.path.isdir("../db"):
@@ -51,9 +51,14 @@ if __name__ == '__main__':
     me.save()
     me = menu.create(value='菜单', content='menu', icon="bars", sort_num=2)
     me.save()
+    for i in menu.select().where(menu.id == 1):
+        print(shortcuts.model_to_dict(i))
 
     for i in menu.select():
         print(shortcuts.model_to_dict(i))
 
-
     database.close()
+
+
+if __name__ == '__main__':
+    init_db()
